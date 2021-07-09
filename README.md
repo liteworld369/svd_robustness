@@ -15,7 +15,8 @@ A description of custom environment setup can be found [here](https://github.com
 |------|----------|-------|
 | [link](https://github.com/liteworld369/svd_robustness/tree/master/training/mnist) | [MNIST](http://yann.lecun.com/exdb/mnist/)    |  |
 
-## Robustness evaluation (Source: https://github.com/szegedai/examples/tree/master/robustness/mnist)
+## Robustness evaluation
+[source](https://github.com/szegedai/examples/tree/master/robustness/mnist)
 
 | Link | Dataset |
 |------|----------|
