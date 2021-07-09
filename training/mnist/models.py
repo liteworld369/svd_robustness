@@ -18,7 +18,7 @@ class MLP(Model):
     def build_model(self, input_shape, nb_classes, nb_components):
         model = keras.models.Sequential([
             keras.layers.Flatten(input_shape=input_shape),
-            keras.layers.Dense(nb_components, activation='linear'), #num components
+            keras.layers.Dense(nb_components, activation='linear'),
             keras.layers.Dense(512, activation='relu'),
             keras.layers.Dense(nb_classes, activation='softmax')
         ])
