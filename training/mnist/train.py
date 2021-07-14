@@ -9,8 +9,9 @@ import util
 
 def main(params):
     original = params.original
+    reconstruct = params.reconstruct
     comps = params.comps
-    ds = MNIST(original,comps)
+    ds = MNIST(original, reconstruct, comps)
     x_train, y_train = ds.get_train()
     x_val, y_val = ds.get_val()
     print(x_train.shape, np.bincount(y_train), x_val.shape, np.bincount(y_val))
@@ -32,11 +33,14 @@ def main(params):
     m_path = os.path.join(params.save_dir, model_holder.get_name())
     util.mk_parent_dir(m_path)
     if(original!="true"):
-        label = '_svd_comps_' + str(ds.get_nb_components())
+        if(reconstruct=='true'):
+            label = '_svd_reconstruct_comps_' + str(ds.get_nb_components())
+        else:
+            label = '_svd_comps_' + str(ds.get_nb_components())
     else:
         label = '_origin_dense_n_' + str(ds.get_nb_components()) 
     callbacks = [tf.keras.callbacks.ModelCheckpoint(m_path + label + '_{epoch:03d}-{val_loss:.2f}.h5'),
-                 tf.keras.callbacks.CSVLogger(os.path.join(params.save_dir, 'metrics.csv'))]
+                 tf.keras.callbacks.CSVLogger(os.path.join(params.save_dir, label + '_metrics.csv'))]
     model.fit(x_train, y_train, epochs=params.epoch, validation_data=(x_val, y_val),
               batch_size=params.batch_size,
               callbacks=callbacks)
@@ -46,10 +50,11 @@ if __name__ == '__main__':
     parser = ArgumentParser(description='Main entry point')
     parser.add_argument("--gpu", type=int)
     parser.add_argument("--original", type=str, default='true')
+    parser.add_argument("--reconstruct", type=str, default='true')
     parser.add_argument("--comps", type=int, default=10)
     parser.add_argument("--memory_limit", type=int, default=1024)
     parser.add_argument("--batch_size", type=int, default=50)
-    parser.add_argument("--epoch", type=int, default=100)
+    parser.add_argument("--epoch", type=int, default=50)
     parser.add_argument("--save_dir", type=str, default=os.path.join('saved_models'))
     FLAGS = parser.parse_args()
     np.random.seed(9)

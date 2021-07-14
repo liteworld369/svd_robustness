@@ -9,7 +9,6 @@ __pycache__/
 # project related
 __pycache__/
 .vscode/
-*.sh
 
 # Distribution / packaging
 .Python

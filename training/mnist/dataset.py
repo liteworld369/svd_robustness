@@ -18,7 +18,7 @@ class DataSet(ABC):
 
 class MNIST(DataSet):
 
-    def __init__(self, original="true", comps=10, val_size=1000, seed=9) -> None:
+    def __init__(self, original="true", reconstruct='true', comps=10, val_size=1000, seed=9) -> None:
         self.rnd = np.random.RandomState(seed)
         mnist = tf.keras.datasets.mnist
 
@@ -29,13 +29,12 @@ class MNIST(DataSet):
             x_train=x_train.reshape((60000,-1))
             num_components = comps
             U, s, V = np.linalg.svd(x_train[:10000]) 
-            x_proj=np.dot(x_train,V[:num_components,:].T)
-            x_train=np.dot(x_proj,V[:num_components,:])  
-
-            x_test=x_test.reshape((10000,-1))
-            x_proj=np.dot(x_test,V[:num_components,:].T)
-            x_test=np.dot(x_proj,V[:num_components,:]) 
-        ##
+            if(reconstruct=="true"):
+                x_proj=np.dot(x_train,V[:num_components,:].T)
+                x_train=np.dot(x_proj,V[:num_components,:])  
+                x_test=x_test.reshape((10000,-1))
+                x_proj=np.dot(x_test,V[:num_components,:].T)
+                x_test=np.dot(x_proj,V[:num_components,:])  
 
         x_train, x_test = np.array(x_train / 255.0, np.float32), np.array(x_test / 255.0, np.float32)
 
@@ -44,6 +43,13 @@ class MNIST(DataSet):
         self.y_test = np.array(y_test, np.int64)
         self.x_test = x_test.reshape((x_test.shape[0], 28, 28, 1))
         self.x_train, self.y_train, self.x_val, self.y_val = self.split_data(self.rnd, val_size // 10, self.x_train, self.y_train)
+
+        if(original!="true"):
+            if(reconstruct=="true"):
+                self.x_val=self.x_val.reshape((1000,-1))
+                x_proj=np.dot(self.x_val,V[:num_components,:].T)
+                self.x_val=np.dot(x_proj,V[:num_components,:])
+
         self.V = []
         self.components = comps
         if(original!="true"):

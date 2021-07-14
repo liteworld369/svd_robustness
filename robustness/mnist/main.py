@@ -43,6 +43,7 @@ def main(params):
     labs = tf.convert_to_tensor(y_test)
     acc = np.mean(np.argmax(pred, axis=1) == y_test)
     x_adv = batch_attack(imgs, labs, attack, fmodel, params.eps, params.batch_size)
+    # calculate 
     p_adv = model.predict(x_adv)
     a_acc = np.mean(np.argmax(p_adv, axis=1) == y_test)
     print(netname)
