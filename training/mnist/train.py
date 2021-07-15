@@ -11,12 +11,13 @@ def main(params):
     original = params.original
     reconstruct = params.reconstruct
     comps = params.comps
+    dense_size = params.dense_size
     ds = MNIST(original, reconstruct, comps)
     x_train, y_train = ds.get_train()
     x_val, y_val = ds.get_val()
     print(x_train.shape, np.bincount(y_train), x_val.shape, np.bincount(y_val))
     model_holder = MLP()
-    model = model_holder.build_model(ds.get_input_shape(), ds.get_nb_classes(), ds.get_nb_components())
+    model = model_holder.build_model(ds.get_input_shape(), ds.get_nb_classes(), ds.get_nb_components(), dense_size)
     loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
     metrics = ['sparse_categorical_accuracy']
     
@@ -34,13 +35,13 @@ def main(params):
     util.mk_parent_dir(m_path)
     if(original!="true"):
         if(reconstruct=='true'):
-            label = '_svd_reconstruct_comps_' + str(ds.get_nb_components())
+            label = '_svd_reconstruct_comps_' + str(ds.get_nb_components()) + '_dense_' + str(dense_size)
         else:
-            label = '_svd_comps_' + str(ds.get_nb_components())
+            label = '_svd_comps_' + str(ds.get_nb_components()) + '_dense_' + str(dense_size) 
     else:
-        label = '_origin_dense_n_' + str(ds.get_nb_components()) 
-    callbacks = [tf.keras.callbacks.ModelCheckpoint(m_path + label + '_{epoch:03d}-{val_loss:.2f}.h5'),
-                 tf.keras.callbacks.CSVLogger(os.path.join(params.save_dir, label + '_metrics.csv'))]
+        label = '_origin_dense_n_' + str(ds.get_nb_components()) + '_dense_' + str(dense_size) 
+    callbacks = [tf.keras.callbacks.ModelCheckpoint(m_path + label + '_{epoch:03d}.h5'),
+                 tf.keras.callbacks.CSVLogger(os.path.join(params.save_dir, label + '.csv'))]
     model.fit(x_train, y_train, epochs=params.epoch, validation_data=(x_val, y_val),
               batch_size=params.batch_size,
               callbacks=callbacks)
@@ -52,6 +53,7 @@ if __name__ == '__main__':
     parser.add_argument("--original", type=str, default='true')
     parser.add_argument("--reconstruct", type=str, default='true')
     parser.add_argument("--comps", type=int, default=10)
+    parser.add_argument("--dense_size", type=int, default=128)
     parser.add_argument("--memory_limit", type=int, default=1024)
     parser.add_argument("--batch_size", type=int, default=50)
     parser.add_argument("--epoch", type=int, default=50)

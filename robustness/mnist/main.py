@@ -20,6 +20,8 @@ def main(params):
     print(params)
     netname = params.fname
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+    x_test=x_train[:10000]
+    y_test=y_train[:10000]
     # it is important to cast the dtype otherwise the attack will throw exception
     x_test = np.array(x_test.reshape((x_test.shape[0], 28, 28, 1)) / 255., np.float32)
     y_test = np.array(y_test, np.int64)
@@ -46,10 +48,8 @@ def main(params):
     # calculate 
     p_adv = model.predict(x_adv)
     a_acc = np.mean(np.argmax(p_adv, axis=1) == y_test)
-    print(netname)
-    print('acc:', acc)
-    print('robust-acc:', a_acc)
-
+    #print(netname)
+    print('acc=', acc,',robust-acc=', a_acc)
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='Model evaluation')

@@ -9,6 +9,7 @@ conda create -n env_name python=3.8.5
 conda activate env_name
 conda config --env --add channels conda-forge
 conda install numpy==1.19.5
+pip install pandas==1.3.0
 conda install matplotlib==3.2.2
 pip install tensorflow-gpu==2.4.1
 pip install foolbox==3.3.1
