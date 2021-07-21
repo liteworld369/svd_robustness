@@ -9,7 +9,7 @@ all_files = glob.glob(path + "/*.csv")
 
 li = []
 header = ['filename', 'model_index', 'val_sparse_categorical_accuracy']
-f = open('combined_training.csv', 'w')
+f = open('combined_training.csv', 'w', newline='')
 writer = csv.writer(f)
 writer.writerow(header)
 

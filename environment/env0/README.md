@@ -13,6 +13,12 @@ pip install pandas==1.3.0
 conda install matplotlib==3.2.2
 pip install tensorflow-gpu==2.4.1
 pip install foolbox==3.3.1
+conda install -c conda-forge scikit-learn 
+```
+
+## List Installed Packages
+```sh
+conda list
 ```
 
 ## Test

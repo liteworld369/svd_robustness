@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 import numpy as np
+from numpy.core.numerictypes import ScalarType
 import tensorflow as tf
+from sklearn.preprocessing import StandardScaler
+
 
 class DataSet(ABC):
     @abstractmethod
@@ -20,24 +23,47 @@ class MNIST(DataSet):
 
     def __init__(self, original="true", reconstruct='true', comps=10, val_size=1000, seed=9) -> None:
         self.rnd = np.random.RandomState(seed)
+        self.m = 0
+        self.sigma =1
         mnist = tf.keras.datasets.mnist
 
         (x_train, y_train), (x_test, y_test) = mnist.load_data()
-        
+    
         # SVD DECOMPOSITION 
         if(original!="true"):
+            #print('x:', x_train[1])
+            #x_train = self.TrimOutliers(x_train )
+            #x_test = self.TrimOutliers(x_test)
+
+            #x_train = self.SVD(x_train , comps)
+            #x_test = self.SVD(x_test, comps)
+            
+            #print('v:', x_train[1])
             x_train=x_train.reshape((60000,-1))
+            x_test=x_test.reshape((10000,-1))
+            # standarization
+            #scaler = StandardScaler(with_mean=True, with_std=True)
+            scaler = StandardScaler()
+            scaler.fit(x_train)
+            x_train = scaler.transform(x_train)
+            #scaler.fit(x_test)
+            x_test = scaler.transform(x_test)
+            
             num_components = comps
-            U, s, V = np.linalg.svd(x_train[:10000]) 
+            U, s, V = np.linalg.svd(x_train[:10000])
+            V = V             
+            
             if(reconstruct=="true"):
                 x_proj=np.dot(x_train,V[:num_components,:].T)
-                x_train=np.dot(x_proj,V[:num_components,:])  
-                x_test=x_test.reshape((10000,-1))
-                x_proj=np.dot(x_test,V[:num_components,:].T)
-                x_test=np.dot(x_proj,V[:num_components,:])  
+                self.m=  np.mean(x_proj,axis=1)
+                self.sigma= np.std(x_proj,axis=1)
+                x_train=np.dot(x_proj,V[:num_components,:]) 
+                x_proj=np.dot(x_test,V[:num_components,:].T) 
+                x_test=   np.dot(x_proj,V[:num_components,:])
 
-        x_train, x_test = np.array(x_train / 255.0, np.float32), np.array(x_test / 255.0, np.float32)
-
+        #x_train, x_test = np.array(x_train / 255.0, np.float32), np.array(x_test / 255.0, np.float32)
+        
+        
         self.x_train = x_train.reshape((x_train.shape[0], 28, 28, 1))
         self.y_train = np.array(y_train, np.int64)
         self.y_test = np.array(y_test, np.int64)
@@ -87,8 +113,14 @@ class MNIST(DataSet):
 
     def get_v(self):
         return self.V
+    
+    def get_mean(self):
+        return self.m
+    def get_sigma(self):
+        return self.sigma
 
     def get_train(self):
+        print('shape:', self.x_train.shape)
         return self.x_train, self.y_train
 
     def get_test(self):
@@ -99,3 +131,48 @@ class MNIST(DataSet):
 
     def get_name(self):
         return 'MNIST'
+
+
+    def SVD(self, D, comps):
+        print('...generating SVDs')
+        for i in range(0,len(D),1):
+            num_components = comps  # add more hps for comps
+            U, s, V = np.linalg.svd(D[i])
+            #min_matrix2 = np.dot(U[:,:10],np.dot(np.diag(s[:10]),V[:10,:]))
+            # standarization
+            x_proj = np.dot(D[i],V[:3,:].T)
+            min_matrix =  np.dot(x_proj,V[:3,:])
+            #D[i]= np.dot(x_proj,V[:num_components,:])
+            x_proj = np.dot(D[i],V[:num_components,:].T)
+            #img1
+            #img2
+            #(img1+img2)/2-->[0,512]
+            # [0,2]
+            D[i]  = np.dot(x_proj,V[:num_components,:]) + self.TrimOutliers(min_matrix) 
+        return D
+
+    def TrimOutliers(self, D):
+        D[D>190] = 0
+        D[D<80] = 0
+        return D
+
+
+
+## CNN 
+""" class MNISTPatches():
+    def init():
+        x_train=..
+        x_train_patches=[]
+        for x_i in x_train:
+            #scikit learn
+            #pick random patches
+            x_i_patches=extract_patrches(x_i,(7,7))
+            x_train_patches.append(x_train_patches)
+        #x_train_patches.shape=2400000x7x7x1
+        s,d,v=np.linalg.svd(x_train_patches)
+        #V.shape=n_componentsx49
+        #28x28
+        #CNN((7x7))=V
+        #model=sequentila()
+        #model.add(CONv2d(n_components,(7,7))) """
+
