@@ -3,7 +3,7 @@ import os
 import tensorflow as tf
 import numpy as np
 from dataset import MNIST
-from models import MLP
+from models import MLP, SampleCNN
 import util
 
 
@@ -17,6 +17,7 @@ def main(params):
     x_val, y_val = ds.get_val()
     print(x_train.shape, np.bincount(y_train), x_val.shape, np.bincount(y_val))
     model_holder = MLP()
+    #model_holder = SampleCNN()
     model = model_holder.build_model(ds.get_input_shape(), ds.get_nb_classes(), ds.get_nb_components(), dense_size, ds.get_mean(), ds.get_sigma())
     loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
     metrics = ['sparse_categorical_accuracy']

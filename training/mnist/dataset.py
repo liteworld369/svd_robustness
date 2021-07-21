@@ -52,7 +52,6 @@ class MNIST(DataSet):
             num_components = comps
             U, s, V = np.linalg.svd(x_train[:10000])
             V = V             
-            
             if(reconstruct=="true"):
                 x_proj=np.dot(x_train,V[:num_components,:].T)
                 self.m=  np.mean(x_proj,axis=1)
@@ -120,7 +119,6 @@ class MNIST(DataSet):
         return self.sigma
 
     def get_train(self):
-        print('shape:', self.x_train.shape)
         return self.x_train, self.y_train
 
     def get_test(self):
