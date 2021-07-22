@@ -45,7 +45,7 @@ def main(params):
     y_test = np.array(y_test, np.int64)
     if netname.endswith(".h5"):
         model = keras.models.load_model(netname
-                                        ,custom_objects={'NormalizingLayer':NormalizingLayer}
+                                       # ,custom_objects={'NormalizingLayer':NormalizingLayer}
                                         )
     else:
         raise Exception("Network filename format is not supported: {0}".format(netname))

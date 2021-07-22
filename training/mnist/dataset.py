@@ -25,6 +25,8 @@ class MNIST(DataSet):
         self.rnd = np.random.RandomState(seed)
         self.m = 0
         self.sigma =1
+        self.V = []
+        self.components = comps
         mnist = tf.keras.datasets.mnist
 
         (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -49,18 +51,18 @@ class MNIST(DataSet):
             #scaler.fit(x_test)
             x_test = scaler.transform(x_test)
             
-            num_components = comps
             U, s, V = np.linalg.svd(x_train[:10000])
-            V = V             
+            self.V = V #.reshape((V.shape[0], 784))
+                         
             if(reconstruct=="true"):
-                x_proj=np.dot(x_train,V[:num_components,:].T)
+                x_proj=np.dot(x_train,self.V[:self.components,:].T)
                 self.m=  np.mean(x_proj,axis=1)
                 self.sigma= np.std(x_proj,axis=1)
-                x_train=np.dot(x_proj,V[:num_components,:]) 
-                x_proj=np.dot(x_test,V[:num_components,:].T) 
-                x_test=   np.dot(x_proj,V[:num_components,:])
+                x_train=np.dot(x_proj,self.V[:self.components,:])  * scaler.mean_
+                x_proj=np.dot(x_test,self.V[:self.components,:].T) 
+                x_test=   np.dot(x_proj,self.V[:self.components,:])
 
-        #x_train, x_test = np.array(x_train / 255.0, np.float32), np.array(x_test / 255.0, np.float32)
+        x_train, x_test = np.array(x_train / 255.0, np.float32), np.array(x_test / 255.0, np.float32)
         
         
         self.x_train = x_train.reshape((x_train.shape[0], 28, 28, 1))
@@ -72,14 +74,8 @@ class MNIST(DataSet):
         if(original!="true"):
             if(reconstruct=="true"):
                 self.x_val=self.x_val.reshape((1000,-1))
-                x_proj=np.dot(self.x_val,V[:num_components,:].T)
-                self.x_val=np.dot(x_proj,V[:num_components,:])
-
-        self.V = []
-        self.components = comps
-        if(original!="true"):
-            self.V = V
-            self.components = num_components
+                x_proj=np.dot(self.x_val,V[:self.components,:].T)
+                self.x_val=np.dot(x_proj,V[:self.components,:])
 
 
     def split_data(self, rnd, sample_per_class, x, y):

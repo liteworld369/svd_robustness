@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 from tensorflow import keras
+from tensorflow.python.keras.constraints import MinMaxNorm
 from tensorflow.python.keras.layers.core import Flatten
 from tensorflow.keras import backend as K
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 
 class Model(ABC):
     @abstractmethod
@@ -10,7 +12,7 @@ class Model(ABC):
         pass
 class NormalizingLayer(keras.layers.Layer):
 
-    def __init__(self,mean,sigma, trainable=True, name=None, dtype=None, dynamic=False, **kwargs):
+    def __init__(self,mean,sigma, trainable=False, name=None, dtype=None, dynamic=False, **kwargs):
         super().__init__(trainable, name, dtype, dynamic, **kwargs) 
         self.mean = K.constant(mean, dtype=K.floatx())
         self.sigma = K.constant(sigma, dtype=K.floatx())
@@ -23,8 +25,7 @@ class NormalizingLayer(keras.layers.Layer):
                 }
 
     def call(self, inputs, **kwargs):
-        print('input:',inputs.shape)
-        out = (inputs - self.mean) / self.sigma
+        out = (inputs - self.mean) / self.sigma 
         return out
 
 class MLP(Model):
@@ -39,7 +40,7 @@ class MLP(Model):
             keras.layers.Flatten(input_shape=input_shape),
             keras.layers.Dense(nb_components, activation='linear'),
             #keras.layers.Dense(784,),
-            NormalizingLayer(mean, sigma),
+           # NormalizingLayer(mean, sigma),
             #keras.layers.Dense(dense_size, activation='relu'),
             keras.layers.Dense(nb_classes ) #, activation='softmax') #
         ])
@@ -47,7 +48,7 @@ class MLP(Model):
 
 
 class SampleCNN(Model):
-    def __init__(self, n_filters=32) -> None:
+    def __init__(self, n_filters=50) -> None:
         self.n_filters = n_filters
 
     def get_name(self):

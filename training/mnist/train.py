@@ -26,6 +26,8 @@ def main(params):
     if(original!="true"):
         ws=model.get_weights()
         V = ds.get_v()
+        #V = V.reshape((V.shape[0], 1, 28,28))
+        print('weight shape: ', V.shape)
         ws[0]=V[:ds.get_nb_components(),:].T 
         model.set_weights(ws)
         model.layers[1].trainable=False 
