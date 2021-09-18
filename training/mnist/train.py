@@ -12,10 +12,15 @@ def main(params):
     reconstruct = params.reconstruct
     comps = params.comps
     dense_size = params.dense_size
-    ds = MNIST(original, reconstruct, comps)
+    ds = MNIST(original, reconstruct, comps,patch_size_for_v=(5,5))
     x_train, y_train = ds.get_train()
     x_val, y_val = ds.get_val()
     print(x_train.shape, np.bincount(y_train), x_val.shape, np.bincount(y_val))
+    if params.normalize==True:
+        MLP_norm(V,m,s,m2,s2)
+    else:
+        MLP()
+        
     model_holder = MLP()
     #model_holder = SampleCNN()
     model = model_holder.build_model(ds.get_input_shape(), ds.get_nb_classes(), ds.get_nb_components(), dense_size, ds.get_mean(), ds.get_sigma())
@@ -26,11 +31,12 @@ def main(params):
     if(original!="true"):
         ws=model.get_weights()
         V = ds.get_v()
+        
         #V = V.reshape((V.shape[0], 1, 28,28))
         print('weight shape: ', V.shape)
         ws[0]=V[:ds.get_nb_components(),:].T 
         model.set_weights(ws)
-        model.layers[1].trainable=False 
+        model.layers[2].trainable=False # 2 because we have normalization layer 1 if not
     ##
     
     model.compile(tf.keras.optimizers.Adam(1e-4), loss_fn, metrics)

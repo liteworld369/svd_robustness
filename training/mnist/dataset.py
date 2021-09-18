@@ -41,24 +41,31 @@ class MNIST(DataSet):
             #x_test = self.SVD(x_test, comps)
             
             #print('v:', x_train[1])
+            
             x_train=x_train.reshape((60000,-1))
             x_test=x_test.reshape((10000,-1))
-            # standarization
+            
+             # standarization
             #scaler = StandardScaler(with_mean=True, with_std=True)
             scaler = StandardScaler()
             scaler.fit(x_train)
             x_train = scaler.transform(x_train)
             #scaler.fit(x_test)
             x_test = scaler.transform(x_test)
-            
-            U, s, V = np.linalg.svd(x_train[:10000])
+            m2,s2=scaler.mean_,scaler.var_   ## for the first normal layer
+        
+            U, s, V = np.linalg.svd(x_train[:10000])   
             self.V = V #.reshape((V.shape[0], 784))
+            
+            ##
+            
                          
             if(reconstruct=="true"):
                 x_proj=np.dot(x_train,self.V[:self.components,:].T)
-                self.m=  np.mean(x_proj,axis=1)
-                self.sigma= np.std(x_proj,axis=1)
-                x_train=np.dot(x_proj,self.V[:self.components,:])  * scaler.mean_
+                self.m=  np.mean(x_proj,axis=0)
+                self.sigma= np.std(x_proj,axis=0)
+                print('shapes sigma m', self.m.shape, self.sigma.shape)
+                x_train=np.dot(x_proj,self.V[:self.components,:])   
                 x_proj=np.dot(x_test,self.V[:self.components,:].T) 
                 x_test=   np.dot(x_proj,self.V[:self.components,:])
 
@@ -125,7 +132,6 @@ class MNIST(DataSet):
 
     def get_name(self):
         return 'MNIST'
-
 
     def SVD(self, D, comps):
         print('...generating SVDs')

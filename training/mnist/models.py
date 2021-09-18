@@ -5,6 +5,7 @@ from tensorflow.python.keras.layers.core import Flatten
 from tensorflow.keras import backend as K
 import numpy as np
 from sklearn.preprocessing import StandardScaler
+from tensorflow.python.keras.models import Sequential
 
 class Model(ABC):
     @abstractmethod
@@ -21,6 +22,7 @@ class NormalizingLayer(keras.layers.Layer):
         base_conf = super().get_config()
         return {**base_conf,
                 'mean': np.asfarray(self.mean),
+                #'mean': np.asarray(self.mean,dtype=np.float32),
                 'sigma': np.asfarray(self.sigma)
                 }
 
@@ -30,20 +32,30 @@ class NormalizingLayer(keras.layers.Layer):
 
 class MLP(Model):
     def __init__(self, n_filters=32) -> None:
-        self.n_filters = n_filters
+        self.n_filters = n_filters 
 
     def get_name(self):
         return 'MLP'
-
-    def build_model(self, input_shape, nb_classes, nb_components, dense_size, mean, sigma):
+    
+    def build_model(self, input_shape, nb_classes, nb_components, dense_size, mean, sigma, normalize):
+        # layers=[]
+        # layers.append(Flatten())
+        # if normalize:    
+        # model=Sequential(layers)
+        
         model = keras.models.Sequential([
             keras.layers.Flatten(input_shape=input_shape),
+            
+            NormalizingLayer(mean, sigma), ## applied on the original dataset
+            
             keras.layers.Dense(nb_components, activation='linear'),
             #keras.layers.Dense(784,),
-           # NormalizingLayer(mean, sigma),
+            NormalizingLayer(mean, sigma), # applied in the projected space
             #keras.layers.Dense(dense_size, activation='relu'),
             keras.layers.Dense(nb_classes ) #, activation='softmax') #
         ])
+        
+        
         return model
 
 
@@ -56,11 +68,10 @@ class SampleCNN(Model):
 
     def build_model(self, input_shape, nb_classes, nb_components, dense_size, mean, sigma):
         model = keras.models.Sequential([
-            keras.layers.Conv2D(self.n_filters, (28, 28), padding='same', input_shape=input_shape, activation='relu'),
-            keras.layers.Dense(nb_components, activation='linear'),
-            keras.layers.MaxPooling2D(),
+            keras.layers.Conv2D(self.n_filters, (28, 28), padding='same', input_shape=input_shape, activation='linear'),
+            #keras.layers.MaxPooling2D(),
             keras.layers.Conv2D(self.n_filters * 2, (28, 28), padding='same', activation='relu'),
-            keras.layers.MaxPooling2D(),
+            #keras.layers.MaxPooling2D(),
             keras.layers.Flatten(),
             keras.layers.Dense(1024, activation='relu'),
             keras.layers.Dense(nb_classes)
