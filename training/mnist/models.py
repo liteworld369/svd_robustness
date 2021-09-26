@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from tensorflow import keras
 from tensorflow.python.keras.constraints import MinMaxNorm
-from tensorflow.python.keras.layers.core import Flatten
+from tensorflow.python.keras.layers.core import Dense, Flatten
 from tensorflow.keras import backend as K
 import numpy as np
 from sklearn.preprocessing import StandardScaler
@@ -9,25 +9,23 @@ from tensorflow.python.keras.models import Sequential
 
 class Model(ABC):
     @abstractmethod
-    def build_model(self, input_shape, nb_classes, nb_components, dense_size, mean, sigma):
+    def build_model(self, input_shape, nb_classes, nb_components, dense_size, mean1, sigma1, mean2, sigma2, normalize, freeze):
         pass
 class NormalizingLayer(keras.layers.Layer):
-
     def __init__(self,mean,sigma, trainable=False, name=None, dtype=None, dynamic=False, **kwargs):
         super().__init__(trainable, name, dtype, dynamic, **kwargs) 
         self.mean = K.constant(mean, dtype=K.floatx())
-        self.sigma = K.constant(sigma, dtype=K.floatx())
+        self.sigma = K.constant(sigma, dtype=K.floatx()) 
         
     def get_config(self):
         base_conf = super().get_config()
         return {**base_conf,
-                'mean': np.asfarray(self.mean),
-                #'mean': np.asarray(self.mean,dtype=np.float32),
+                'mean': np.asfarray(self.mean), 
                 'sigma': np.asfarray(self.sigma)
                 }
 
     def call(self, inputs, **kwargs):
-        out = (inputs - self.mean) / self.sigma 
+        out = (inputs - self.mean) / self.sigma   # standarization
         return out
 
 class MLP(Model):
@@ -37,24 +35,19 @@ class MLP(Model):
     def get_name(self):
         return 'MLP'
     
-    def build_model(self, input_shape, nb_classes, nb_components, dense_size, mean, sigma, normalize):
-        # layers=[]
-        # layers.append(Flatten())
-        # if normalize:    
-        # model=Sequential(layers)
-        
-        model = keras.models.Sequential([
-            keras.layers.Flatten(input_shape=input_shape),
-            
-            NormalizingLayer(mean, sigma), ## applied on the original dataset
-            
-            keras.layers.Dense(nb_components, activation='linear'),
-            #keras.layers.Dense(784,),
-            NormalizingLayer(mean, sigma), # applied in the projected space
-            #keras.layers.Dense(dense_size, activation='relu'),
-            keras.layers.Dense(nb_classes ) #, activation='softmax') #
-        ])
-        
+    def build_model(self, input_shape, nb_classes, nb_components, dense_size, mean1, sigma1, mean2, sigma2, normalize, freeze):
+        layers=[]
+        #0
+        layers.append(Flatten(input_shape=input_shape))
+        if normalize: # applied on the original dataset   
+            #1
+            layers.append(NormalizingLayer(mean1, sigma1))
+        #1/2
+        layers.append(Dense(nb_components, activation='linear'))
+        if normalize and freeze: # applied in the projected space
+            layers.append(NormalizingLayer(mean2, sigma2))
+        layers.append(Dense(nb_classes ))
+        model=Sequential(layers)
         
         return model
 

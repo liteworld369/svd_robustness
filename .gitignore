@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# models folder and files
+saved_models/
+*.h5
+
 # project related
 __pycache__/
 .vscode/

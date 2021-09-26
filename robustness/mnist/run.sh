@@ -4,7 +4,7 @@ IFS=','
 [ ! -f $INPUT ] && { echo "$INPUT file not found"; exit 99; }
 while IFS=, read -r filename model_index val_sparse_categorical_accuracy
 do
-	eval $(echo "File:$filename")
+	eval $(echo "File Loaded:$filename")
 	for trials in 1 10; do
 		for steps in 40 100; do
 			for eps in 1.0 2.0; do

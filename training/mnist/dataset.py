@@ -23,8 +23,10 @@ class MNIST(DataSet):
 
     def __init__(self, original="true", reconstruct='true', comps=10, val_size=1000, seed=9) -> None:
         self.rnd = np.random.RandomState(seed)
-        self.m = 0
-        self.sigma =1
+        self.m1 = 0
+        self.sigma1 =1
+        self.m2 = 0
+        self.sigma2 =1
         self.V = []
         self.components = comps
         mnist = tf.keras.datasets.mnist
@@ -52,19 +54,22 @@ class MNIST(DataSet):
             x_train = scaler.transform(x_train)
             #scaler.fit(x_test)
             x_test = scaler.transform(x_test)
-            m2,s2=scaler.mean_,scaler.var_   ## for the first normal layer
+            self.m1,self.sigma1=scaler.mean_,scaler.var_   ## for the first normal layer
         
             U, s, V = np.linalg.svd(x_train[:10000])   
             self.V = V #.reshape((V.shape[0], 784))
-            
-            ##
-            
-                         
+             
+            ##  to obtain new mean and sigma for the second normal layer
+            x_proj=np.dot(x_train,self.V[:self.components,:].T)
+            self.m2=  np.mean(x_proj,axis=0)
+            self.sigma2= np.std(x_proj,axis=0)
+            ##         
+                
             if(reconstruct=="true"):
                 x_proj=np.dot(x_train,self.V[:self.components,:].T)
-                self.m=  np.mean(x_proj,axis=0)
-                self.sigma= np.std(x_proj,axis=0)
-                print('shapes sigma m', self.m.shape, self.sigma.shape)
+                self.m1=  np.mean(x_proj,axis=0)
+                self.sigma1= np.std(x_proj,axis=0)
+                print('shapes sigma m', self.m1.shape, self.sigma1.shape)
                 x_train=np.dot(x_proj,self.V[:self.components,:])   
                 x_proj=np.dot(x_test,self.V[:self.components,:].T) 
                 x_test=   np.dot(x_proj,self.V[:self.components,:])
@@ -116,11 +121,15 @@ class MNIST(DataSet):
     def get_v(self):
         return self.V
     
-    def get_mean(self):
-        return self.m
-    def get_sigma(self):
-        return self.sigma
-
+    def get_mean1(self):
+        return self.m1
+    def get_sigma1(self):
+        return self.sigma1
+    def get_mean2(self):
+        return self.m2
+    def get_sigma2(self):
+        return self.sigma2
+    
     def get_train(self):
         return self.x_train, self.y_train
 
