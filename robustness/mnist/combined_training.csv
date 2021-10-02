@@ -1,4 +1,3 @@
-filename,model_index,val_sparse_categorical_accuracy
 ../../training/mnist/saved_models/MLP_model-type_original_comps_100_dense_128_norm_0_freeze_0_006.h5,6,0.92
 ../../training/mnist/saved_models/MLP_model-type_original_comps_100_dense_128_norm_0_freeze_1_007.h5,7,0.92
 ../../training/mnist/saved_models/MLP_model-type_original_comps_100_dense_128_norm_1_freeze_0_008.h5,8,0.92

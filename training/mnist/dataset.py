@@ -49,6 +49,8 @@ class MNIST(DataSet):
             
              # standarization
             #scaler = StandardScaler(with_mean=True, with_std=True)
+            
+            # DO NOT OVERWRITE
             scaler = StandardScaler()
             scaler.fit(x_train)
             x_train = scaler.transform(x_train)
@@ -74,6 +76,8 @@ class MNIST(DataSet):
                 x_proj=np.dot(x_test,self.V[:self.components,:].T) 
                 x_test=   np.dot(x_proj,self.V[:self.components,:])
 
+        
+        # this before standard scaler
         x_train, x_test = np.array(x_train / 255.0, np.float32), np.array(x_test / 255.0, np.float32)
         
         

@@ -35,6 +35,7 @@ class MLP(Model):
     def get_name(self):
         return 'MLP'
     
+    # remove dense  layer
     def build_model(self, input_shape, nb_classes, nb_components, dense_size, mean1, sigma1, mean2, sigma2, normalize, freeze):
         layers=[]
         #0
@@ -44,8 +45,10 @@ class MLP(Model):
             layers.append(NormalizingLayer(mean1, sigma1))
         #1/2
         layers.append(Dense(nb_components, activation='linear'))
+        
         if normalize and freeze: # applied in the projected space
             layers.append(NormalizingLayer(mean2, sigma2))
+        
         layers.append(Dense(nb_classes ))
         model=Sequential(layers)
         

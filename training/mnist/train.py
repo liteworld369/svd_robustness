@@ -36,7 +36,7 @@ def main(params):
         ws[0]=V[:ds.get_nb_components(),:].T 
         model.set_weights(ws)
         
-        if params.freeze: # for dense layer
+        if params.freeze: # for dense layer // trainable 
             if params.normalize:
                 model.layers[2].trainable=False
             else:
