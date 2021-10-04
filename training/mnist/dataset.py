@@ -21,79 +21,54 @@ class DataSet(ABC):
 
 class MNIST(DataSet):
 
-    def __init__(self, original="true", reconstruct='true', comps=10, val_size=1000, seed=9) -> None:
+    def __init__(self, normalize, comps=10, val_size=1000, seed=9) -> None:
         self.rnd = np.random.RandomState(seed)
-        self.m1 = 0
-        self.sigma1 =1
-        self.m2 = 0
-        self.sigma2 =1
-        self.V = []
+        self.m1 = None
+        self.sigma1 =None
+        self.m2 = None
+        self.sigma2 =None
+        self.V = None
         self.components = comps
         mnist = tf.keras.datasets.mnist
 
         (x_train, y_train), (x_test, y_test) = mnist.load_data()
-    
-        # SVD DECOMPOSITION 
-        if(original!="true"):
-            #print('x:', x_train[1])
-            #x_train = self.TrimOutliers(x_train )
-            #x_test = self.TrimOutliers(x_test)
-
-            #x_train = self.SVD(x_train , comps)
-            #x_test = self.SVD(x_test, comps)
-            
-            #print('v:', x_train[1])
-            
-            x_train=x_train.reshape((60000,-1))
-            x_test=x_test.reshape((10000,-1))
-            
-             # standarization
-            #scaler = StandardScaler(with_mean=True, with_std=True)
-            
-            # DO NOT OVERWRITE
-            scaler = StandardScaler()
-            scaler.fit(x_train)
-            x_train = scaler.transform(x_train)
-            #scaler.fit(x_test)
-            x_test = scaler.transform(x_test)
-            self.m1,self.sigma1=scaler.mean_,scaler.var_   ## for the first normal layer
-        
-            U, s, V = np.linalg.svd(x_train[:10000])   
-            self.V = V #.reshape((V.shape[0], 784))
-             
-            ##  to obtain new mean and sigma for the second normal layer
-            x_proj=np.dot(x_train,self.V[:self.components,:].T)
-            self.m2=  np.mean(x_proj,axis=0)
-            self.sigma2= np.std(x_proj,axis=0)
-            ##         
-                
-            if(reconstruct=="true"):
-                x_proj=np.dot(x_train,self.V[:self.components,:].T)
-                self.m1=  np.mean(x_proj,axis=0)
-                self.sigma1= np.std(x_proj,axis=0)
-                print('shapes sigma m', self.m1.shape, self.sigma1.shape)
-                x_train=np.dot(x_proj,self.V[:self.components,:])   
-                x_proj=np.dot(x_test,self.V[:self.components,:].T) 
-                x_test=   np.dot(x_proj,self.V[:self.components,:])
-
-        
-        # this before standard scaler
         x_train, x_test = np.array(x_train / 255.0, np.float32), np.array(x_test / 255.0, np.float32)
-        
+        x_train_temp=x_train.reshape((60000,-1))
+        x_test_temp=x_test.reshape((10000,-1))
+        self.sigma_tresh=1e-4
+        # standarization 
+        if normalize:
+            """ scaler = StandardScaler()
+            scaler.fit(x_train_temp)
+            x_train_temp = scaler.transform(x_train_temp)"""
+            #scaler.fit(x_test)
+            #x_test_temp = scaler.transform(x_test_temp)
+            self.m1,self.sigma1=np.mean(x_train_temp,axis=0),np.std(x_train_temp,axis=0)   ## for the first normal layer
+            #print(np.sum(self.sigma1<self.sigma_tresh))
+            self.sigma1[self.sigma1<self.sigma_tresh]=1
+            
+            #print(self.m1.shape,self.sigma1.shape)
+            x_train_temp=(x_train_temp-self.m1)/self.sigma1
+            
+    
+        U, s, V = np.linalg.svd(x_train_temp[:10000])   
+        self.V = V #.reshape((V.shape[0], 784))
+            
+        ##  to obtain new mean and sigma for the second normal layer
+        x_proj=np.dot(x_train_temp,self.V[:self.components,:].T)
+        self.m2=  np.mean(x_proj,axis=0)
+        self.sigma2= np.std(x_proj,axis=0)
+        #print(np.sum(self.sigma2<self.sigma_tresh))
+        self.sigma2[self.sigma2<self.sigma_tresh]=1
+
         
         self.x_train = x_train.reshape((x_train.shape[0], 28, 28, 1))
         self.y_train = np.array(y_train, np.int64)
         self.y_test = np.array(y_test, np.int64)
         self.x_test = x_test.reshape((x_test.shape[0], 28, 28, 1))
         self.x_train, self.y_train, self.x_val, self.y_val = self.split_data(self.rnd, val_size // 10, self.x_train, self.y_train)
-
-        if(original!="true"):
-            if(reconstruct=="true"):
-                self.x_val=self.x_val.reshape((1000,-1))
-                x_proj=np.dot(self.x_val,V[:self.components,:].T)
-                self.x_val=np.dot(x_proj,V[:self.components,:])
-
-
+ 
+ 
     def split_data(self, rnd, sample_per_class, x, y):
         x_equalized = ()
         x_remained = ()
@@ -146,46 +121,5 @@ class MNIST(DataSet):
     def get_name(self):
         return 'MNIST'
 
-    def SVD(self, D, comps):
-        print('...generating SVDs')
-        for i in range(0,len(D),1):
-            num_components = comps  # add more hps for comps
-            U, s, V = np.linalg.svd(D[i])
-            #min_matrix2 = np.dot(U[:,:10],np.dot(np.diag(s[:10]),V[:10,:]))
-            # standarization
-            x_proj = np.dot(D[i],V[:3,:].T)
-            min_matrix =  np.dot(x_proj,V[:3,:])
-            #D[i]= np.dot(x_proj,V[:num_components,:])
-            x_proj = np.dot(D[i],V[:num_components,:].T)
-            #img1
-            #img2
-            #(img1+img2)/2-->[0,512]
-            # [0,2]
-            D[i]  = np.dot(x_proj,V[:num_components,:]) + self.TrimOutliers(min_matrix) 
-        return D
-
-    def TrimOutliers(self, D):
-        D[D>190] = 0
-        D[D<80] = 0
-        return D
-
-
-
-## CNN 
-""" class MNISTPatches():
-    def init():
-        x_train=..
-        x_train_patches=[]
-        for x_i in x_train:
-            #scikit learn
-            #pick random patches
-            x_i_patches=extract_patrches(x_i,(7,7))
-            x_train_patches.append(x_train_patches)
-        #x_train_patches.shape=2400000x7x7x1
-        s,d,v=np.linalg.svd(x_train_patches)
-        #V.shape=n_componentsx49
-        #28x28
-        #CNN((7x7))=V
-        #model=sequentila()
-        #model.add(CONv2d(n_components,(7,7))) """
-
+     
+ 

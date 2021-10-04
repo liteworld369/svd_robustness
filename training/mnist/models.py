@@ -9,7 +9,7 @@ from tensorflow.python.keras.models import Sequential
 
 class Model(ABC):
     @abstractmethod
-    def build_model(self, input_shape, nb_classes, nb_components, dense_size, mean1, sigma1, mean2, sigma2, normalize, freeze):
+    def build_model(self, input_shape, nb_classes, nb_components, mean1, sigma1, mean2, sigma2, normalize, freeze):
         pass
 class NormalizingLayer(keras.layers.Layer):
     def __init__(self,mean,sigma, trainable=False, name=None, dtype=None, dynamic=False, **kwargs):
@@ -36,7 +36,7 @@ class MLP(Model):
         return 'MLP'
     
     # remove dense  layer
-    def build_model(self, input_shape, nb_classes, nb_components, dense_size, mean1, sigma1, mean2, sigma2, normalize, freeze):
+    def build_model(self, input_shape, nb_classes, nb_components, mean1, sigma1, mean2, sigma2, normalize, freeze):
         layers=[]
         #0
         layers.append(Flatten(input_shape=input_shape))
@@ -49,7 +49,7 @@ class MLP(Model):
         if normalize and freeze: # applied in the projected space
             layers.append(NormalizingLayer(mean2, sigma2))
         
-        layers.append(Dense(nb_classes ))
+        layers.append(Dense(nb_classes, activation='linear' ))  # no activation for 
         model=Sequential(layers)
         
         return model

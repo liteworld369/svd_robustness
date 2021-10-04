@@ -18,7 +18,7 @@ for csv_filename in all_files:
     rowIndex = df['val_sparse_categorical_accuracy'].idxmax()
     rowMax = df['val_sparse_categorical_accuracy'].max()
     li.append([os.path.basename(csv_filename),[rowIndex,rowMax]] )  
-    model_path = path + '/MLP' +  os.path.basename(csv_filename).replace('.csv','') + f'_{rowIndex:03d}.h5'
+    model_path = path + '/MLP' +  os.path.basename(csv_filename).replace('.csv','') + f'_{rowIndex+1:03d}.h5'
     writer.writerow([model_path, rowIndex, f'{rowMax:.2f}'])
 
 
