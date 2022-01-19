@@ -70,6 +70,15 @@ class MLP(Model):
         if denses == 2: 
             layers.append(Dense(dense_size , activation='relu' ))
             layers.append(Dense(dense_size , activation='relu' ))
+        if denses == 3:
+            layers.append(Dense(dense_size , activation='relu' ))
+            layers.append(Dense(dense_size , activation='relu' ))
+            layers.append(Dense(dense_size , activation='relu' ))
+        if denses == 4:
+            layers.append(Dense(dense_size , activation='relu' ))
+            layers.append(Dense(dense_size , activation='relu' ))
+            layers.append(Dense(dense_size , activation='relu' ))
+            layers.append(Dense(dense_size , activation='relu' ))
         
         layers.append(Dense(nb_classes, activation='linear' ))  # no activation for 
         model=Sequential(layers)
