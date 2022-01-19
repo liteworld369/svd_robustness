@@ -36,9 +36,11 @@ def batch_attack(imgs, labels, attack, fmodel, eps, batch_size):
 def main(params):
     print(params)
     netname = params.fname 
-    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
-    x_test=x_train[:10000]
-    y_test=y_train[:10000]
+
+    if params.dataset == 'MNIST':
+        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+    elif params.dataset == 'FMNIST':
+        (x_train, y_train), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
     # it is important to cast the dtype otherwise the attack will throw exception
     x_test = np.array(x_test.reshape((x_test.shape[0], 28, 28, 1)) / 255., np.float32)
     y_test = np.array(y_test, np.int64)
@@ -71,6 +73,7 @@ def main(params):
 if __name__ == '__main__':
     parser = ArgumentParser(description='Model evaluation')
     parser.add_argument('--gpu', type=int, default=0)
+    parser.add_argument("--dataset", type=str, default='MNIST')
     parser.add_argument('--fname', type=str, required=True)
     parser.add_argument('--batch_size', type=int, default=1000)
     parser.add_argument('--trials', type=int, default=1)
