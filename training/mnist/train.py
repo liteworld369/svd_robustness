@@ -10,12 +10,13 @@ import util
 
 
 def main(params): 
-    comps = params.comps 
+    comps = params.comps
+    v2 = params.v2 
     dataset = params.dataset
     if dataset == 'MNIST':
-        ds = MNIST(params.normalize1, params.method, comps) #, patch_size_for_v=(5,5))
+        ds = MNIST(params.normalize1, params.method, comps, v2) #, patch_size_for_v=(5,5))
     elif dataset == 'FMNIST':
-        ds = FMNIST(params.normalize1, params.method, comps) #, patch_size_for_v=(5,5))
+        ds = FMNIST(params.normalize1, params.method, comps, v2) #, patch_size_for_v=(5,5))
     x_train, y_train = ds.get_train()
     x_val, y_val = ds.get_val()
     #print(x_train.shape, np.bincount(y_train), x_val.shape, np.bincount(y_val))
@@ -54,7 +55,7 @@ def main(params):
     model.compile(tf.keras.optimizers.Adam(1e-4), loss_fn, metrics) 
     m_path = os.path.join(params.save_dir, model_holder.get_name())
     util.mk_parent_dir(m_path) 
-    label = '_model_comps_' + str(ds.get_nb_components()) + '_dataset_' +  params.dataset +  '_method_' + params.method + '_normalized1_' +  str(params.normalize1) + '_normalized2_' +  str(params.normalize2) + '_freezed_' +  str(params.freeze) + '_denses_' +  str(params.denses) + '_dense-size_' +  str(params.dense_size)
+    label = '_model_comps_' + str(ds.get_nb_components()) + '_dataset_' +  params.dataset +  '_method_' + params.method +  '_v2_' + str(params.v2) + '_normalized1_' +  str(params.normalize1) + '_normalized2_' +  str(params.normalize2) + '_freezed_' +  str(params.freeze) + '_denses_' +  str(params.denses) + '_dense-size_' +  str(params.dense_size)
     callbacks = [tf.keras.callbacks.ModelCheckpoint(m_path + label + '_{epoch:03d}.h5'),
                  tf.keras.callbacks.CSVLogger(os.path.join(params.save_dir, label + '.csv'))]
     #print(model.predict(x_train[:10]))
@@ -75,7 +76,8 @@ if __name__ == '__main__':
     parser.add_argument("--method", type=str, default='svd')
     parser.add_argument("--normalize1", type=int, default=0)
     parser.add_argument("--normalize2", type=int, default=0)
-    parser.add_argument("--freeze", type=int, default=1)  # freeze training on dense layer
+    parser.add_argument("--v2", type=int, default=0) 
+    parser.add_argument("--freeze", type=int, default=0)  # freeze training on dense layer
     parser.add_argument("--denses", type=int, default=1)  # number of extra dense layers
     parser.add_argument("--dense_size", type=int, default=256)
     parser.add_argument("--memory_limit", type=int, default=1024)

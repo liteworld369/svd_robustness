@@ -22,7 +22,7 @@ class DataSet(ABC):
 
 class MNIST(DataSet):
 
-    def __init__(self, normalize1=0, method='svd', comps=10, val_size=1000, seed=9) -> None:
+    def __init__(self, normalize1=0, method='svd', comps=10, v2=0, val_size=1000, seed=9) -> None:
         self.rnd = np.random.RandomState(seed)
         self.m1 = None
         self.sigma1 =None
@@ -47,6 +47,9 @@ class MNIST(DataSet):
         if method=='svd':
             M = np.dot(x_train_temp[:60000].T,x_train_temp[:60000])
             self.U, s, self.V =np.linalg.svd(M)
+            #s/=s[-1]
+            if v2 == 1:
+                self.V =  s*self.V
 
 
             
@@ -138,7 +141,7 @@ class MNIST(DataSet):
     
 class FMNIST(DataSet):
 
-    def __init__(self, normalize1=0, method='svd', comps=10, val_size=1000, seed=9) -> None:
+    def __init__(self, normalize1=0, method='svd', comps=10, v2=0, val_size=1000, seed=9) -> None:
         self.rnd = np.random.RandomState(seed)
         self.m1 = None
         self.sigma1 =None
@@ -166,6 +169,10 @@ class FMNIST(DataSet):
         if method=='svd':
             M = np.dot(x_train_temp[:60000].T,x_train_temp[:60000])
             self.U, s, self.V =np.linalg.svd(M)
+            #s/=s[-1]
+            if v2 == 1:
+                self.V =  s*self.V
+                
 
         elif method=='gaussian':
             grp=GaussianRandomProjection(n_components=self.components)

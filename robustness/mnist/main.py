@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 import tensorflow as tf
 from tensorflow import keras
-from foolbox.attacks import LinfPGD, L2PGD, BoundaryAttack
+from foolbox.attacks import LinfPGD, L2PGD,L1PGD, BoundaryAttack
 from foolbox.models import TensorFlowModel
 import numpy as np
 import os
@@ -53,6 +53,8 @@ def main(params):
         attack = LinfPGD(abs_stepsize=params.eps / params.steps * 2.5, steps=params.steps, random_start=True)
     elif FLAGS.norm == "l2":
         attack = L2PGD(abs_stepsize=params.eps / params.steps * 2.5, steps=params.steps, random_start=True)
+    elif FLAGS.norm == "l1":
+        attack = L1PGD(abs_stepsize=params.eps / params.steps * 2.5, steps=params.steps, random_start=True)
     elif FLAGS.norm == "b":
         attack = BoundaryAttack(init_attack=None, steps=40, spherical_step=0.01, source_step=0.01, source_step_convergance=1e-07, step_adaptation=1.5, tensorboard=False, update_stats_every_k=10)
     else:
