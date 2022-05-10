@@ -51,22 +51,6 @@ class MLP(Model):
         elif reconstruct==2:
             layers.append(Dense(np.prod(input_shape), activation='linear'))
 
-        #x_data
-        #proj1
-        #n_compontents<<<200
-        #x_data*V
-        #proj2
-        #x_data*V*V2
-        ##V2==10,20,...,100
-        #in model
-        #proj'
-        #x_data*V'
-        #V'=V*V2
-
-
-
-
-
         if normalize2 and freeze: # applied in the projected space
             layers.append(NormalizingLayer(mean2, sigma2))
         #128,256
