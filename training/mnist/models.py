@@ -13,14 +13,14 @@ class Model(ABC):
         pass
 class NormalizingLayer(keras.layers.Layer):
     def __init__(self,mean,sigma, trainable=False, name=None, dtype=None, dynamic=False, **kwargs):
-        super().__init__(trainable, name, dtype, dynamic, **kwargs) 
+        super().__init__(trainable, name, dtype, dynamic, **kwargs)
         self.mean = K.constant(mean, dtype=K.floatx())
-        self.sigma = K.constant(sigma, dtype=K.floatx()) 
-        
+        self.sigma = K.constant(sigma, dtype=K.floatx())
+
     def get_config(self):
         base_conf = super().get_config()
         return {**base_conf,
-                'mean': np.asfarray(self.mean), 
+                'mean': np.asfarray(self.mean),
                 'sigma': np.asfarray(self.sigma)
                 }
 
@@ -30,21 +30,27 @@ class NormalizingLayer(keras.layers.Layer):
 
 class MLP(Model):
     def __init__(self, n_filters=32) -> None:
-        self.n_filters = n_filters 
+        self.n_filters = n_filters
 
     def get_name(self):
         return 'MLP'
-    
+
     # remove dense  layer
-    def build_model(self, input_shape, nb_classes, nb_components, mean1, sigma1, mean2, sigma2, normalize1, normalize2, freeze, denses, dense_size):
+    def build_model(self, input_shape, nb_classes, nb_components, mean1, sigma1, mean2, sigma2, normalize1, normalize2, freeze, denses, dense_size,reconstruct):
         layers=[]
         #0
         layers.append(Flatten(input_shape=input_shape))
-        if normalize1: # applied on the original dataset   
+        if normalize1: # applied on the original dataset
             #1
             layers.append(NormalizingLayer(mean1, sigma1))
         #1/2
         layers.append(Dense(nb_components, activation='linear'))
+        if reconstruct==1:
+            layers.append(Dense(np.prod(input_shape), activation='linear'))
+            layers.append(Dense(nb_components, activation='linear'))
+        elif reconstruct==2:
+            layers.append(Dense(np.prod(input_shape), activation='linear'))
+
         #x_data
         #proj1
         #n_compontents<<<200
@@ -56,18 +62,18 @@ class MLP(Model):
         #proj'
         #x_data*V'
         #V'=V*V2
-        
-        
-        
-        
-        
+
+
+
+
+
         if normalize2 and freeze: # applied in the projected space
             layers.append(NormalizingLayer(mean2, sigma2))
         #128,256
         #nr_of_layers=1,2
         if denses == 1:
             layers.append(Dense(dense_size, activation='relu' ))
-        if denses == 2: 
+        if denses == 2:
             layers.append(Dense(dense_size , activation='relu' ))
             layers.append(Dense(dense_size , activation='relu' ))
         if denses == 3:
@@ -92,10 +98,10 @@ class MLP(Model):
             layers.append(Dense(dense_size , activation='relu' ))
             layers.append(Dense(dense_size , activation='relu' ))
             layers.append(Dense(dense_size , activation='relu' ))
-        
-        layers.append(Dense(nb_classes, activation='linear' ))  # no activation for 
+
+        layers.append(Dense(nb_classes, activation='linear' ))  # no activation for
         model=Sequential(layers)
-        
+
         return model
 
 

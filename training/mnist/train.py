@@ -9,9 +9,9 @@ from models import MLP, SampleCNN
 import util
 
 
-def main(params): 
+def main(params):
     comps = params.comps
-    v2 = params.v2 
+    v2 = params.v2
     dataset = params.dataset
     if dataset == 'MNIST':
         ds = MNIST(params.normalize1, params.method, comps, v2) #, patch_size_for_v=(5,5))
@@ -20,48 +20,57 @@ def main(params):
     x_train, y_train = ds.get_train()
     x_val, y_val = ds.get_val()
     #print(x_train.shape, np.bincount(y_train), x_val.shape, np.bincount(y_val))
-     
+
     model_holder = MLP()
     #model_holder = SampleCNN()
-    model = model_holder.build_model(ds.get_input_shape(), ds.get_nb_classes(), ds.get_nb_components(), ds.get_mean1(), ds.get_sigma1(), ds.get_mean2(), ds.get_sigma2(), params.normalize1, params.normalize2, params.freeze, params.denses, params.dense_size)
+    model = model_holder.build_model(ds.get_input_shape(), ds.get_nb_classes(), ds.get_nb_components(), ds.get_mean1(), ds.get_sigma1(), ds.get_mean2(), ds.get_sigma2(), params.normalize1, params.normalize2, params.freeze, params.denses, params.dense_size,params.reconstruct)
     model.summary()
     loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
     metrics = ['sparse_categorical_accuracy']
-    
+
     #Update Model Weights from V
     ws=model.get_weights()
     #range of V is [-inf,+inf]
     #min,max
     # np.median(V) as threshold --> set the half of V to zero
-    V = ds.get_v() 
-    scaler=0 
-    ws[0]=  V[:ds.get_nb_components(),:].T 
-    
-    #ws[0]=  U[:ds.get_nb_components(),:].T 
-     
+    V = ds.get_v()
+    scaler=0
+    ws[0][:]=  V[:ds.get_nb_components(),:].T
+    if params.reconstruct>=1:
+        ws[2][:]=  V[:ds.get_nb_components(),:]
+
+    #ws[0]=  U[:ds.get_nb_components(),:].T
+
     """  print(ws[0].shape)
     import sys
     sys.exit(0) """
     if params.freeze:  # svd
      model.set_weights(ws)
-    
-    if params.freeze: # for dense layer // freeze = non-trainable 
+
+    if params.freeze: # for dense layer // freeze = non-trainable
         if params.normalize1:
             model.layers[2].trainable=False
+            if params.reconstruct>=1:
+                #Freeze the reconstruction layer
+                model.layers[3].trainable=False
         else:
             model.layers[1].trainable=False
-    
-    
-    model.compile(tf.keras.optimizers.Adam(1e-4), loss_fn, metrics) 
+            if params.reconstruct>=1:
+                #Freeze the reconstruction layer
+                model.layers[2].trainable=False
+
+
+    model.compile(tf.keras.optimizers.Adam(1e-4), loss_fn, metrics)
+
     m_path = os.path.join(params.save_dir, model_holder.get_name())
-    util.mk_parent_dir(m_path) 
-    label = '_model_comps_' + str(ds.get_nb_components()) + '_dataset_' +  params.dataset +  '_method_' + params.method +  '_v2_' + str(params.v2) + '_normalized1_' +  str(params.normalize1) + '_normalized2_' +  str(params.normalize2) + '_freezed_' +  str(params.freeze) + '_denses_' +  str(params.denses) + '_dense-size_' +  str(params.dense_size)
-    callbacks = [tf.keras.callbacks.ModelCheckpoint(m_path + label + '_{epoch:03d}.h5'),
+    util.mk_parent_dir(m_path)
+    label = '_model_comps_' + str(ds.get_nb_components()) + '_dataset_' +  params.dataset +  '_method_' + params.method +  '_v2_' + str(params.v2) + '_normalized1_' +  str(params.normalize1) + '_normalized2_' +  str(params.normalize2) + '_freezed_' +  str(params.freeze) + '_denses_' +  str(params.denses) + '_dense-size_' +  str(params.dense_size)+'_recon_'+str(params.reconstruct)
+    callbacks = [tf.keras.callbacks.ModelCheckpoint(m_path + label + '_.h5',save_best_only=True),
                  tf.keras.callbacks.CSVLogger(os.path.join(params.save_dir, label + '.csv'))]
     #print(model.predict(x_train[:10]))
     #import sys
     #sys.exit(0)
-    
+
     # adverasial training
     model.fit(x_train, y_train, epochs=params.epoch, validation_data=(x_val, y_val),
               batch_size=params.batch_size,
@@ -70,13 +79,14 @@ def main(params):
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='Main entry point')
-    parser.add_argument("--gpu", type=int, default=0) 
+    parser.add_argument("--gpu", type=int, default=0)
     parser.add_argument("--comps", type=int, default=32)
-    parser.add_argument("--dataset", type=str, default='MNIST') 
+    parser.add_argument("--dataset", type=str, default='MNIST')
     parser.add_argument("--method", type=str, default='svd')
+    parser.add_argument("--reconstruct", type=int, default=0)
     parser.add_argument("--normalize1", type=int, default=0)
     parser.add_argument("--normalize2", type=int, default=0)
-    parser.add_argument("--v2", type=int, default=0) 
+    parser.add_argument("--v2", type=int, default=0)
     parser.add_argument("--freeze", type=int, default=0)  # freeze training on dense layer
     parser.add_argument("--denses", type=int, default=1)  # number of extra dense layers
     parser.add_argument("--dense_size", type=int, default=256)
