@@ -65,7 +65,7 @@ def main(params):
     m_path = os.path.join(params.save_dir, model_holder.get_name())
     util.mk_parent_dir(m_path)
     label = '_model_comps_' + str(ds.get_nb_components()) + '_dataset_' +  params.dataset +  '_method_' + params.method +  '_v2_' + str(params.v2) + '_normalized1_' +  str(params.normalize1) + '_normalized2_' +  str(params.normalize2) + '_freezed_' +  str(params.freeze) + '_denses_' +  str(params.denses) + '_dense-size_' +  str(params.dense_size)+'_recon_'+str(params.reconstruct)
-    callbacks = [tf.keras.callbacks.ModelCheckpoint(m_path + label + '_.h5', monitor='val_sparse_categorical_accuracy', save_best_only=True),
+    callbacks = [tf.keras.callbacks.ModelCheckpoint(m_path + label  + '_{epoch:03d}.h5', monitor='val_sparse_categorical_accuracy', save_best_only=True),
                  tf.keras.callbacks.CSVLogger(os.path.join(params.save_dir, label + '.csv'))]
     #print(model.predict(x_train[:10]))
     #import sys
