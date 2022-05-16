@@ -1,0 +1,30 @@
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 2 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 0 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 2 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 1 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 2 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 2 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 2 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 4 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 4 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 0 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 4 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 1 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 4 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 2 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 4 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 4 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 6 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 0 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 6 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 1 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 6 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 2 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 6 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 4 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+wait
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 16 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 0 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 16 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 1 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 16 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 2 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 16 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 4 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 65 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 0 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 65 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 1 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 65 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 2 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 65 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 4 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 319 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 0 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 319 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 1 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 319 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 2 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 319 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 4 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+wait
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 619 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 0 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 619 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 1 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 619 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 2 --dense_size 256 --gpu 3  | tee -a fmnist_defenses_output.csv &
+python train.py --save_dir FMNIST --dataset FMNIST --epoch 100 --comps 619 --method svd --freeze 1 --reconstruct 2 --normalize1 0 --normalize2 0 --denses 4 --dense_size 256 --gpu 0  | tee -a fmnist_defenses_output.csv &
