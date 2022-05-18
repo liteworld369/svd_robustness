@@ -22,12 +22,8 @@ class DataSet(ABC):
 
 class MNIST(DataSet):
 
-    def __init__(self, normalize1=0, method='svd', comps=10, v2=0, val_size=1000, seed=9) -> None:
+    def __init__(self, method='svd', comps=10, v2=0, val_size=1000, seed=9) -> None:
         self.rnd = np.random.RandomState(seed)
-        self.m1 = None
-        self.sigma1 =None
-        self.m2 = None
-        self.sigma2 =None
         self.V = None
         self.U = None
         self.components = comps
@@ -37,12 +33,7 @@ class MNIST(DataSet):
         x_train, x_test = np.array(x_train / 255.0, np.float32), np.array(x_test / 255.0, np.float32)
         x_train_temp=x_train.reshape((60000,-1))
         x_test_temp=x_test.reshape((10000,-1))
-        self.sigma_tresh=1e-4
-        # standarization
-        if normalize1: 
-            self.m1,self.sigma1=np.mean(x_train_temp,axis=0),np.std(x_train_temp,axis=0)   ## for the first normal layer 
-            self.sigma1[self.sigma1<self.sigma_tresh]=1 
-            x_train_temp=(x_train_temp-self.m1)/self.sigma1
+
         #method='svd'
         if method=='svd':
             M = np.dot(x_train_temp[:60000].T,x_train_temp[:60000])
@@ -50,8 +41,6 @@ class MNIST(DataSet):
             #s/=s[-1]
             if v2 == 1:
                 self.V =  s*self.V
-
-
             
         elif method=='gaussian':
             grp=GaussianRandomProjection(n_components=self.components)
@@ -68,12 +57,7 @@ class MNIST(DataSet):
         self.V.T-->inverse of self.V
         x_train=self.U*s*self.V*self.V_inv """
         
-        ##  to obtain new mean and sigma for the second normal layer
-        x_proj=np.dot(x_train_temp,self.V[:self.components,:].T)           
-        self.m2=  np.mean(x_proj,axis=0)
-        self.sigma2= np.std(x_proj,axis=0)
-        #print(np.sum(self.sigma2<self.sigma_tresh))
-        self.sigma2[self.sigma2<self.sigma_tresh]=1
+         
 
         
         self.x_train = x_train.reshape((x_train.shape[0], 28, 28, 1))
@@ -117,15 +101,6 @@ class MNIST(DataSet):
     def get_u(self):
         return self.U
     
-    def get_mean1(self):
-        return self.m1
-    def get_sigma1(self):
-        return self.sigma1
-    def get_mean2(self):
-        return self.m2
-    def get_sigma2(self):
-        return self.sigma2
-    
     def get_train(self):
         return self.x_train, self.y_train
 
@@ -141,12 +116,8 @@ class MNIST(DataSet):
     
 class FMNIST(DataSet):
 
-    def __init__(self, normalize1=0, method='svd', comps=10, v2=0, val_size=1000, seed=9) -> None:
+    def __init__(self, method='svd', comps=10, v2=0, val_size=1000, seed=9) -> None:
         self.rnd = np.random.RandomState(seed)
-        self.m1 = None
-        self.sigma1 =None
-        self.m2 = None
-        self.sigma2 =None
         self.V = None
         self.U = None
         self.components = comps
@@ -159,12 +130,8 @@ class FMNIST(DataSet):
         
         x_train_temp=x_train.reshape((60000,-1))
         x_test_temp=x_test.reshape((10000,-1))
-        self.sigma_tresh=1e-4
-        # standarization
-        if normalize1: 
-            self.m1,self.sigma1=np.mean(x_train_temp,axis=0),np.std(x_train_temp,axis=0)   ## for the first normal layer 
-            self.sigma1[self.sigma1<self.sigma_tresh]=1 
-            x_train_temp=(x_train_temp-self.m1)/self.sigma1
+
+
         #method='svd'
         if method=='svd':
             M = np.dot(x_train_temp[:60000].T,x_train_temp[:60000])
@@ -189,19 +156,7 @@ class FMNIST(DataSet):
         """  x_proj=self.U*s*self.V
         self.V.T-->inverse of self.V
         x_train=self.U*s*self.V*self.V_inv """
-        
-        ##  to obtain new mean and sigma for the second normal layer
-        x_proj=np.dot(x_train_temp,self.V[:self.components,:].T)
-        if method=='gaussian' or method=='sparse':
-            print(x_proj2.shape)
-            print(x_proj.shape)
-            print('mse:',np.mean(np.square(x_proj-x_proj2)))            
-        self.m2=  np.mean(x_proj,axis=0)
-        self.sigma2= np.std(x_proj,axis=0)
-        #print(np.sum(self.sigma2<self.sigma_tresh))
-        self.sigma2[self.sigma2<self.sigma_tresh]=1
-
-        
+       
         self.x_train = x_train.reshape((x_train.shape[0], 28, 28, 1))
         self.y_train = np.array(y_train, np.int64)
         self.y_test = np.array(y_test, np.int64)
@@ -242,16 +197,7 @@ class FMNIST(DataSet):
     
     def get_u(self):
         return self.U
-    
-    def get_mean1(self):
-        return self.m1
-    def get_sigma1(self):
-        return self.sigma1
-    def get_mean2(self):
-        return self.m2
-    def get_sigma2(self):
-        return self.sigma2
-    
+ 
     def get_train(self):
         return self.x_train, self.y_train
 

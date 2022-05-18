@@ -23,15 +23,15 @@ def main(params):
     comps = params.comps 
     dataset = params.dataset
     if dataset == 'MNIST':
-        ds = MNIST(params.normalize1, params.method, comps) 
+        ds = MNIST(params.method, comps) 
     elif dataset == 'FMNIST':
-        ds = FMNIST(params.normalize1, params.method, comps) 
+        ds = FMNIST(params.method, comps) 
     x_train, y_train = ds.get_train()
     x_val, y_val = ds.get_val()
     print(x_train.shape, np.bincount(y_train), x_val.shape, np.bincount(y_val))
     
     model_holder =  MLP()
-    model = model_holder.build_model(ds.get_input_shape(), ds.get_nb_classes(), ds.get_nb_components(), ds.get_mean1(), ds.get_sigma1(), ds.get_mean2(), ds.get_sigma2(), params.normalize1, params.normalize2, params.freeze, params.denses, params.dense_size, params.reconstruct)
+    model = model_holder.build_model(ds.get_input_shape(), ds.get_nb_classes(), ds.get_nb_components(),  params.freeze, params.denses, params.dense_size,params.reconstruct, params.regularizer)
     loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
     metrics = ['sparse_categorical_accuracy']
     ws=model.get_weights()
@@ -45,22 +45,16 @@ def main(params):
      model.set_weights(ws)
 
     if params.freeze: # for dense layer // freeze = non-trainable
-        if params.normalize1:
+        model.layers[1].trainable=False
+        if params.reconstruct>=1:
+            #Freeze the reconstruction layer
             model.layers[2].trainable=False
-            if params.reconstruct>=1:
-                #Freeze the reconstruction layer
-                model.layers[3].trainable=False
-        else:
-            model.layers[1].trainable=False
-            if params.reconstruct>=1:
-                #Freeze the reconstruction layer
-                model.layers[2].trainable=False
                 
     model.compile(tf.keras.optimizers.Adam(1e-4), loss_fn, metrics)
     m_path = os.path.join(params.save_dir, model_holder.get_name())
     util.mk_parent_dir(m_path) 
     
-    label = '_model_comps_' + str(ds.get_nb_components()) + '_dataset_' +  params.dataset +  '_method_' + params.method + '_normalized1_' +  str(params.normalize1) + '_normalized2_' +  str(params.normalize2) + '_freezed_' +  str(params.freeze) + '_denses_' +  str(params.denses) + '_dense-size_' +  str(params.dense_size)+'_recon_'+str(params.reconstruct)
+    label = '_model_comps_' + str(ds.get_nb_components()) + '_dataset_' +  params.dataset +  '_method_' + params.method +'_freezed_' +  str(params.freeze) + '_denses_' +  str(params.denses) + '_dense-size_' +  str(params.dense_size)+'_recon_'+str(params.reconstruct)+'_regularizer_'+str(params.regularizer)
     callbacks = [tf.keras.callbacks.ModelCheckpoint(m_path + label  + '_{epoch:03d}.h5', monitor='val_accuracy', save_best_only=True),
                  tf.keras.callbacks.CSVLogger(os.path.join(params.save_dir, label + '.csv'))]
 
@@ -112,8 +106,7 @@ if __name__ == '__main__':
     parser.add_argument("--dataset", type=str, default='MNIST') 
     parser.add_argument("--method", type=str, default='svd')
     parser.add_argument("--reconstruct", type=int, default=0)
-    parser.add_argument("--normalize1", type=int, default=0)
-    parser.add_argument("--normalize2", type=int, default=0)
+    parser.add_argument("--regularizer", type=int, default=0)
     parser.add_argument("--freeze", type=int, default=0)  
     parser.add_argument("--denses", type=int, default=1)   
     parser.add_argument("--dense_size", type=int, default=256)

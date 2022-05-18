@@ -6,27 +6,12 @@ from tensorflow.keras import backend as K
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from tensorflow.python.keras.models import Sequential
+import tensorflow as tf
 
 class Model(ABC):
     @abstractmethod
-    def build_model(self, input_shape, nb_classes, nb_components, mean1, sigma1, mean2, sigma2, normalize1, normalize2, freeze, denses, dense_size):
+    def build_model(self, input_shape, nb_classes, nb_components, freeze, denses, dense_size):
         pass
-class NormalizingLayer(keras.layers.Layer):
-    def __init__(self,mean,sigma, trainable=False, name=None, dtype=None, dynamic=False, **kwargs):
-        super().__init__(trainable, name, dtype, dynamic, **kwargs)
-        self.mean = K.constant(mean, dtype=K.floatx())
-        self.sigma = K.constant(sigma, dtype=K.floatx())
-
-    def get_config(self):
-        base_conf = super().get_config()
-        return {**base_conf,
-                'mean': np.asfarray(self.mean),
-                'sigma': np.asfarray(self.sigma)
-                }
-
-    def call(self, inputs, **kwargs):
-        out = (inputs - self.mean) / self.sigma   # standarization
-        return out
 
 class MLP(Model):
     def __init__(self, n_filters=32) -> None:
@@ -34,25 +19,25 @@ class MLP(Model):
 
     def get_name(self):
         return 'MLP'
-
+    def V_regularizer(self,weights):
+        return tf.reduce_sum(0.02 * tf.square(weights))
     # remove dense  layer
-    def build_model(self, input_shape, nb_classes, nb_components, mean1, sigma1, mean2, sigma2, normalize1, normalize2, freeze, denses, dense_size,reconstruct):
+    def build_model(self, input_shape, nb_classes, nb_components, freeze, denses, dense_size,reconstruct, regularizer):
         layers=[]
         #0
         layers.append(Flatten(input_shape=input_shape))
-        if normalize1: # applied on the original dataset
-            #1
-            layers.append(NormalizingLayer(mean1, sigma1))
+        
         #1/2
-        layers.append(Dense(nb_components, activation='linear'))
+        if regularizer:
+            layers.append(Dense(nb_components,activation="linear" , kernel_regularizer=self.V_regularizer))   
+        else :
+            layers.append(Dense(nb_components,activation="linear" )) 
         if reconstruct==1:
             layers.append(Dense(np.prod(input_shape), activation='linear'))
             layers.append(Dense(nb_components, activation='linear'))
         elif reconstruct==2:
             layers.append(Dense(np.prod(input_shape), activation='linear'))
 
-        if normalize2 and freeze: # applied in the projected space
-            layers.append(NormalizingLayer(mean2, sigma2))
         #128,256
         #nr_of_layers=1,2
         if denses == 1:

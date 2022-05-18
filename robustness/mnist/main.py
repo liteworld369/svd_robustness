@@ -8,24 +8,6 @@ import os
 from tensorflow.keras import backend as K
 
 
-class NormalizingLayer(keras.layers.Layer):
-    def __init__(self, mean, sigma, trainable=False, name=None, dtype=None, dynamic=False, **kwargs):
-        super().__init__(trainable, name, dtype, dynamic, **kwargs)
-        self.mean = K.constant(mean, dtype=K.floatx())
-        self.sigma = K.constant(sigma, dtype=K.floatx())
-
-    def get_config(self):
-        base_conf = super().get_config()
-        return {**base_conf,
-                'mean': np.asfarray(self.mean),
-                'sigma': np.asfarray(self.sigma)
-                }
-
-    def call(self, inputs, **kwargs):
-        out = (inputs - self.mean) / self.sigma   # standarization
-        return out
-
-
 def batch_attack(imgs, labels, attack, fmodel, eps, batch_size):
     adv = []
     for i in range(int(np.ceil(imgs.shape[0] / batch_size))):
@@ -49,8 +31,7 @@ def main(params):
         (x_test.shape[0], 28, 28, 1)) / 255., np.float32)
     y_test = np.array(y_test, np.int64)
     if netname.endswith(".h5"):
-        model = keras.models.load_model(netname, custom_objects={
-                                        'NormalizingLayer': NormalizingLayer})
+        model = keras.models.load_model(netname)
     else:
         raise Exception(
             "Network filename format is not supported: {0}".format(netname))
