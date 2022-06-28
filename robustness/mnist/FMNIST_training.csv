@@ -1,0 +1,4 @@
+../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_050.h5,49,0.72
+../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_042.h5,41,0.81
+../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_036.h5,35,0.90
+../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_025.h5,24,0.69

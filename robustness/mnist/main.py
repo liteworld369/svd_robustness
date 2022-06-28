@@ -16,6 +16,8 @@ def batch_attack(imgs, labels, attack, fmodel, eps, batch_size):
         adv.append(x_adv)
     return np.concatenate(adv, axis=0)
 
+def V_regularizer(weights):
+    return tf.reduce_sum(0.02 * tf.square(weights))
 
 def main(params):
     print(params)
@@ -31,7 +33,8 @@ def main(params):
         (x_test.shape[0], 28, 28, 1)) / 255., np.float32)
     y_test = np.array(y_test, np.int64)
     if netname.endswith(".h5"):
-        model = keras.models.load_model(netname)
+        model = keras.models.load_model(netname, custom_objects={
+                                        'V_regularizer': V_regularizer})
     else:
         raise Exception(
             "Network filename format is not supported: {0}".format(netname))

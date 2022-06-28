@@ -10,7 +10,7 @@ import tensorflow as tf
 
 class Model(ABC):
     @abstractmethod
-    def build_model(self, input_shape, nb_classes, nb_components, freeze, denses, dense_size):
+    def build_model(self, input_shape, nb_classes, nb_components, freeze, denses, dense_size,reconstruct, regularizer):
         pass
 
 class MLP(Model):
@@ -20,18 +20,14 @@ class MLP(Model):
     def get_name(self):
         return 'MLP'
     def V_regularizer(self,weights):
-        return tf.reduce_sum(0.02 * tf.square(weights))
+        return tf.reduce_sum(0.99 * tf.square(weights))
     # remove dense  layer
     def build_model(self, input_shape, nb_classes, nb_components, freeze, denses, dense_size,reconstruct, regularizer):
         layers=[]
         #0
         layers.append(Flatten(input_shape=input_shape))
-        
+        layers.append(Dense(nb_components,activation="linear" )) 
         #1/2
-        if regularizer:
-            layers.append(Dense(nb_components,activation="linear" , kernel_regularizer=self.V_regularizer))   
-        else :
-            layers.append(Dense(nb_components,activation="linear" )) 
         if reconstruct==1:
             layers.append(Dense(np.prod(input_shape), activation='linear'))
             layers.append(Dense(nb_components, activation='linear'))
@@ -41,7 +37,10 @@ class MLP(Model):
         #128,256
         #nr_of_layers=1,2
         if denses == 1:
-            layers.append(Dense(dense_size, activation='relu' ))
+            if regularizer:
+                layers.append(Dense(dense_size, activation='relu', kernel_regularizer=self.V_regularizer))
+            else:
+                layers.append(Dense(dense_size, activation='relu' ))
         if denses == 2:
             layers.append(Dense(dense_size , activation='relu' ))
             layers.append(Dense(dense_size , activation='relu' ))

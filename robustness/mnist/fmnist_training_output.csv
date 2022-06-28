@@ -1,0 +1,48 @@
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=1.0, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_050.h5', gpu=1, norm='l2', steps=40, trials=1)
+acc= 0.7216 ,robust-acc= 0.2813
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=10.0, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_050.h5', gpu=1, norm='l1', steps=40, trials=1)
+acc= 0.7216 ,robust-acc= 0.5154
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_050.h5', gpu=1, norm='l1', steps=40, trials=1)
+acc= 0.7216 ,robust-acc= 0.7216
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_050.h5', gpu=1, norm='linf', steps=40, trials=1)
+acc= 0.7216 ,robust-acc= 0.7216
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.1, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_050.h5', gpu=1, norm='linf', steps=40, trials=1)
+acc= 0.7216 ,robust-acc= 0.0985
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_050.h5', gpu=1, norm='l2', steps=40, trials=1)
+acc= 0.7216 ,robust-acc= 0.7216
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_042.h5', gpu=1, norm='l1', steps=40, trials=1)
+acc= 0.7991 ,robust-acc= 0.7991
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=1.0, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_042.h5', gpu=1, norm='l2', steps=40, trials=1)
+acc= 0.7991 ,robust-acc= 0.5484
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=10.0, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_042.h5', gpu=1, norm='l1', steps=40, trials=1)
+acc= 0.7991 ,robust-acc= 0.6743
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_042.h5', gpu=1, norm='linf', steps=40, trials=1)
+acc= 0.7991 ,robust-acc= 0.7991
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.1, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_042.h5', gpu=1, norm='linf', steps=40, trials=1)
+acc= 0.7991 ,robust-acc= 0.3277
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_042.h5', gpu=1, norm='l2', steps=40, trials=1)
+acc= 0.7991 ,robust-acc= 0.7991
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_036.h5', gpu=1, norm='l1', steps=40, trials=1)
+acc= 0.8801 ,robust-acc= 0.8801
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=10.0, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_036.h5', gpu=1, norm='l1', steps=40, trials=1)
+acc= 0.8801 ,robust-acc= 0.6349
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=1.0, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_036.h5', gpu=1, norm='l2', steps=40, trials=1)
+acc= 0.8801 ,robust-acc= 0.3654
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.1, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_036.h5', gpu=1, norm='linf', steps=40, trials=1)
+acc= 0.8801 ,robust-acc= 0.1184
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_036.h5', gpu=1, norm='linf', steps=40, trials=1)
+acc= 0.8801 ,robust-acc= 0.8801
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_65_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_0_036.h5', gpu=1, norm='l2', steps=40, trials=1)
+acc= 0.8801 ,robust-acc= 0.8801
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=1.0, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_025.h5', gpu=1, norm='l2', steps=40, trials=1)
+acc= 0.6699 ,robust-acc= 0.4006
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_025.h5', gpu=1, norm='l1', steps=40, trials=1)
+acc= 0.6699 ,robust-acc= 0.6699
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=10.0, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_025.h5', gpu=1, norm='l1', steps=40, trials=1)
+acc= 0.6699 ,robust-acc= 0.5521
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_025.h5', gpu=1, norm='linf', steps=40, trials=1)
+acc= 0.6699 ,robust-acc= 0.6699
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.1, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_025.h5', gpu=1, norm='linf', steps=40, trials=1)
+acc= 0.6699 ,robust-acc= 0.1872
+Namespace(attack='pgd', batch_size=1000, dataset='FMNIST', eps=0.0, fname='../../training/mnist/FMNIST/MLP_model_comps_4_dataset_FMNIST_method_svd_v2_0_freezed_1_denses_1_dense-size_256_recon_0_regularizer_1_025.h5', gpu=1, norm='l2', steps=40, trials=1)
+acc= 0.6699 ,robust-acc= 0.6699
